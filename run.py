@@ -7,7 +7,8 @@ model = CifarNet()
 # test_data, test_label = d.test.next_batch(1000)
 
 for i in range(100):
-    batch_X, batch_y = d.train.next_batch(500)
+    batch_X, batch_y = d.train.next_batch(100)
+    print(batch_X.shape)
     loss = model.train_model(batch_X, batch_y)
 
     if i%10==0:
