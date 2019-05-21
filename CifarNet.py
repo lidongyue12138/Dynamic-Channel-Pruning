@@ -7,7 +7,7 @@ import tensorflow as tf
 
 class CifarNet:
     def __init__(self):
-        self.lr = 0.01
+        self.lr = 0.001
         self.label_count = 100
 
         self.sess = tf.Session()

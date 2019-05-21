@@ -4,14 +4,14 @@ from CifarNet import CifarNet
 d = CifarDataManager()
 model = CifarNet()
 
-# test_data, test_label = d.test.next_batch(1000)
+# train_data, train_label = d.train.images, d.train.labels
+# test_data, test_label = d.test.images, d.test.labels
 
-for i in range(100):
+for i in range(500):
     batch_X, batch_y = d.train.next_batch(100)
-    print(batch_X.shape)
     loss = model.train_model(batch_X, batch_y)
 
-    if i%10==0:
+    if i%50==0:
         print("Loss at iter %d: %f" %(i, loss))
         # print("testing accuracy: %f" %model.test_acc(test_data, test_label))
 
