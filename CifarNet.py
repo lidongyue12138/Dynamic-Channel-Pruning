@@ -9,7 +9,6 @@ class CifarNet:
     def __init__(self):
         self.lr = 0.001
         self.label_count = 100
-        self.pruning_rate = 0.5
 
         self.sess = tf.Session()
         
@@ -43,6 +42,8 @@ class CifarNet:
     def build_model(self):
         self.xs = tf.placeholder("float", shape=[None, 32, 32, 3])
         self.ys_orig = tf.placeholder("float", shape=[None, self.label_count])
+
+        self.pruning_rate = tf.placeholder(tf.float32, shape=(1))
         self.keep_prob = tf.placeholder(tf.float32)
         self.is_training = tf.placeholder("bool", shape=[])
 
@@ -147,7 +148,7 @@ class CifarNet:
 
             gl = tf.matmul(ss, Ws) + bs
             length = gl.get_shape().as_list()[-1]
-            pl_values, pl_indices = tf.nn.top_k(gl, int(self.pruning_rate*length))
+            pl_values, pl_indices = tf.nn.top_k(gl, tf.cast(self.pruning_rate*length, tf.int32))
 
             shape = gl.get_shape()
             one_hot = tf.one_hot(pl_indices, shape[1], dtype=tf.float32)
@@ -172,7 +173,6 @@ class CifarNet:
         vx = tf.matmul(tf.transpose(x), x)/tf.cast(tf.shape(x)[0], tf.float32)
         cov_xx = vx - mx
         return cov_xx
-
 
     def batch_activ_fc(self, current, in_features, out_features, is_training):
         Wfc = self.weight_variable_xavier([ in_features, out_features ], name = 'W')
