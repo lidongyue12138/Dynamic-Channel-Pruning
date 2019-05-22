@@ -9,6 +9,7 @@ class CifarNet:
     def __init__(self):
         self.lr = 0.001
         self.label_count = 100
+        self.pruning_rate = 0.5
 
         self.sess = tf.Session()
         
@@ -46,28 +47,28 @@ class CifarNet:
         self.is_training = tf.placeholder("bool", shape=[])
 
         with tf.variable_scope("Conv0", reuse = tf.AUTO_REUSE):
-            current = self.batch_activ_conv(self.xs, 3, 64, 3, self.is_training, self.keep_prob)
+            current = self.batch_activ_conv_gated(self.xs, 3, 64, 3, self.is_training, self.keep_prob)
             print(current)
         with tf.variable_scope("Conv1", reuse = tf.AUTO_REUSE):
-            current = self.batch_activ_conv(current, 64, 64, 3, self.is_training, self.keep_prob)
+            current = self.batch_activ_conv_gated(current, 64, 64, 3, self.is_training, self.keep_prob)
             print(current)
         with tf.variable_scope("Conv2", reuse = tf.AUTO_REUSE):
-            current = self.batch_activ_conv(current, 64, 128, 3, self.is_training, self.keep_prob, stride = 2)
+            current = self.batch_activ_conv_gated(current, 64, 128, 3, self.is_training, self.keep_prob, stride = 2)
             print(current)
         with tf.variable_scope("Conv3", reuse = tf.AUTO_REUSE):
-            current = self.batch_activ_conv(current, 128, 128, 3, self.is_training, self.keep_prob)
+            current = self.batch_activ_conv_gated(current, 128, 128, 3, self.is_training, self.keep_prob)
             print(current)
         with tf.variable_scope("Conv4", reuse = tf.AUTO_REUSE):
-            current = self.batch_activ_conv(current, 128, 128, 3, self.is_training, self.keep_prob)
+            current = self.batch_activ_conv_gated(current, 128, 128, 3, self.is_training, self.keep_prob)
             print(current)
         with tf.variable_scope("Conv5", reuse = tf.AUTO_REUSE):
-            current = self.batch_activ_conv(current, 128, 192, 3, self.is_training, self.keep_prob, stride = 2)
+            current = self.batch_activ_conv_gated(current, 128, 192, 3, self.is_training, self.keep_prob, stride = 2)
             print(current)
         with tf.variable_scope("Conv6", reuse = tf.AUTO_REUSE):
-            current = self.batch_activ_conv(current, 192, 192, 3, self.is_training, self.keep_prob)
+            current = self.batch_activ_conv_gated(current, 192, 192, 3, self.is_training, self.keep_prob)
             print(current)
         with tf.variable_scope("Conv7", reuse = tf.AUTO_REUSE):
-            current = self.batch_activ_conv(current, 192, 192, 3, self.is_training, self.keep_prob)
+            current = self.batch_activ_conv_gated(current, 192, 192, 3, self.is_training, self.keep_prob)
             print(current)
             
             current = self.maxpool2d(current, k=8)
@@ -131,6 +132,47 @@ class CifarNet:
             current = tf.nn.relu(current)
             #current = tf.nn.dropout(current, keep_prob)
         return current
+
+    '''
+    This is the implement of dynamic layer
+    '''
+    def batch_activ_conv_gated(self, current, in_features, out_features, kernel_size, is_training, keep_prob, stride=1):
+        with tf.variable_scope("composite_function", reuse = tf.AUTO_REUSE):
+            ''' 
+            Implement of dynamic layer
+            '''
+            ss = tf.norm(current, ord=1, axis=(1,2))
+            Ws = self.weight_variable_xavier([in_features, out_features ], name = 'W')
+            bs = self.bias_variable([ out_features ])
+
+            gl = tf.matmul(ss, Ws) + bs
+            length = gl.get_shape().as_list()[-1]
+            pl_values, pl_indices = tf.nn.top_k(gl, int(self.pruning_rate*length))
+
+            shape = gl.get_shape()
+            one_hot = tf.one_hot(pl_indices, shape[1], dtype=tf.float32)
+            gate = tf.reduce_sum(one_hot, axis=1)
+            
+            pl = tf.multiply(gl, gate)
+            ''' End '''
+
+            current = self.conv2d(current, in_features, out_features, kernel_size, stride)
+            current = tf.contrib.layers.batch_norm(current, scale=True, is_training=is_training, updates_collections=None, trainable=True)
+            # convValues.append(current)
+
+            current = tf.multiply(pl, current)
+
+            current = tf.nn.relu(current)
+            #current = tf.nn.dropout(current, keep_prob)
+        return current
+
+    def tf_cov(self, x):
+        mean_x = tf.reduce_mean(x, axis=0, keep_dims=True)
+        mx = tf.matmul(tf.transpose(mean_x), mean_x)
+        vx = tf.matmul(tf.transpose(x), x)/tf.cast(tf.shape(x)[0], tf.float32)
+        cov_xx = vx - mx
+        return cov_xx
+
 
     def batch_activ_fc(self, current, in_features, out_features, is_training):
         Wfc = self.weight_variable_xavier([ in_features, out_features ], name = 'W')
