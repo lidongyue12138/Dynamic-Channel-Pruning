@@ -27,12 +27,13 @@ class CifarNet:
         loss = self.sess.run(self.cross_entropy, feed_dict=feed_dict)
         return loss
     
-    def test_acc(self, X, y):
+    def test_acc(self, X, y, pruning_rate = 1):
         feed_dict = {
             self.xs: X,
             self.ys_orig: y,
             self.keep_prob : 1,
-            self.is_training : True
+            self.is_training : True,
+            self.pruning_rate : pruning_rate
         }
 
         acc = self.sess.run(self.accuracy, feed_dict = feed_dict)
