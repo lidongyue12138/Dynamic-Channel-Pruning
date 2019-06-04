@@ -40,6 +40,9 @@ class CifarLoader(object):
         self.images = self.normalize_images(self.images)
         return self
 
+    def get_whole_data(self):
+        return self.images, one_hot(self.labels, vals=100)
+
     def next_batch(self, batch_size):
         x, y = self.images[self._i:self._i+batch_size], self.labels[self._i:self._i+batch_size]
         self._i = (self._i + batch_size) % len(self.images)

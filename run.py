@@ -11,7 +11,7 @@ model = CifarNet()
 # train_data, train_label = d.train.images, d.train.labels
 # test_data, test_label = d.test.images, d.test.labels
 
-test_X, test_y = d.test.images, d.test.labels
+test_X, test_y = d.test.get_whole_data()
 
 # Training
 for i in range(500):
