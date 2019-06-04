@@ -15,7 +15,7 @@ class CifarNet:
         self.build_model()
         self.sess.run(self.init)
 
-    def train_model(self, batch_X, batch_y, pruning_rate=[1]):
+    def train_model(self, batch_X, batch_y, pruning_rate=1):
         feed_dict = {
             self.xs: batch_X,
             self.ys_orig: batch_y,
@@ -28,7 +28,7 @@ class CifarNet:
         loss = self.sess.run(self.cross_entropy, feed_dict=feed_dict)
         return loss
     
-    def test_acc(self, X, y, pruning_rate = [1.0]):
+    def test_acc(self, X, y, pruning_rate = 1):
         feed_dict = {
             self.xs: X,
             self.ys_orig: y,
@@ -45,7 +45,7 @@ class CifarNet:
         self.xs = tf.placeholder("float", shape=[None, 32, 32, 3])
         self.ys_orig = tf.placeholder("float", shape=[None, self.label_count])
 
-        self.pruning_rate = tf.placeholder(tf.float32, shape=(1))
+        self.pruning_rate = tf.placeholder(tf.float32, shape=())
         self.keep_prob = tf.placeholder(tf.float32)
         self.is_training = tf.placeholder("bool", shape=[])
 
