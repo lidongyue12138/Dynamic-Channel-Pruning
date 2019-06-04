@@ -18,7 +18,7 @@ model = CifarNet()
 test_X, test_y = d.test.get_whole_data()
 
 # Training
-for i in range(500):
+for i in range(5000):
     batch_X, batch_y = d.train.next_batch(64)
     loss = model.train_model(batch_X, batch_y)
     losses.append(loss)
