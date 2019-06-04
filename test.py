@@ -27,3 +27,4 @@ pl = tf.multiply(gl, gate)
 ''' End '''
 
 current3 = tf.multiply(pl, current2)
+

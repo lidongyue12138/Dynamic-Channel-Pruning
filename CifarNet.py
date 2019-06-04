@@ -157,13 +157,15 @@ class CifarNet:
             gate = tf.reduce_sum(one_hot, axis=1)
             
             pl = tf.multiply(gl, gate)
+            pl = tf.expand_dims(pl, 1)
+            pl = tf.expand_dims(pl, 1)
             ''' End '''
 
             current = self.conv2d(current, in_features, out_features, kernel_size, stride)
             current = tf.contrib.layers.batch_norm(current, scale=True, is_training=is_training, updates_collections=None, trainable=True)
             # convValues.append(current)
 
-            current = tf.multiply(pl, current)
+            current = pl*current
 
             current = tf.nn.relu(current)
             #current = tf.nn.dropout(current, keep_prob)
