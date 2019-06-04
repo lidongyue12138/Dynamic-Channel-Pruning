@@ -96,7 +96,7 @@ class CifarNet:
         '''
         Optimizer
         '''
-        self.train_step = tf.train.MomentumOptimizer(self.lr, 0.9, use_nesterov=True).minimize(self.cross_entropy)
+        self.train_step = tf.train.AdamOptimizer(self.lr).minimize(self.cross_entropy)
         
         '''
         Check whether correct

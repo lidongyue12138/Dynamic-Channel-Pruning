@@ -15,7 +15,7 @@ test_X, test_y = d.test.get_whole_data()
 
 # Training
 for i in range(500):
-    batch_X, batch_y = d.train.next_batch(100)
+    batch_X, batch_y = d.train.next_batch(64)
     loss = model.train_model(batch_X, batch_y)
 
     if i%50==0:
