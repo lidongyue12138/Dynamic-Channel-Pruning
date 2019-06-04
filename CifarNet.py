@@ -84,14 +84,14 @@ class CifarNet:
             bfc = self.bias_variable([ self.label_count ])
             self.ys_pred = tf.matmul(current, Wfc) + bfc
 
-        self.ys_pred_softmax = tf.nn.softmax(self.ys_pred)
+        # self.ys_pred_softmax = tf.nn.softmax(self.ys_pred)
         '''
         Loss Definition
         '''
         # prediction = tf.nn.softmax(ys_)
         # conv_value = tf.add_n([tf.reduce_sum(tf.abs(w)) for w in convValues])
         self.cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
-            logits = self.ys_pred_softmax, labels = self.ys_orig
+            logits = self.ys_pred, labels = self.ys_orig
         ))
         
         '''
