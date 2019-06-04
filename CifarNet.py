@@ -141,31 +141,31 @@ class CifarNet:
     '''
     def batch_activ_conv_gated(self, current, in_features, out_features, kernel_size, is_training, keep_prob, stride=1):
         with tf.variable_scope("composite_function", reuse = tf.AUTO_REUSE):
-            ''' 
-            Implement of dynamic layer
-            '''
-            ss = tf.norm(current, ord=1, axis=(1,2))
-            Ws = self.weight_variable_xavier([in_features, out_features ], name = 'W')
-            bs = self.bias_variable([ out_features ])
+            # ''' 
+            # Implement of dynamic layer
+            # '''
+            # ss = tf.norm(current, ord=1, axis=(1,2))
+            # Ws = self.weight_variable_xavier([in_features, out_features ], name = 'W')
+            # bs = self.bias_variable([ out_features ])
 
-            gl = tf.matmul(ss, Ws) + bs
-            length = gl.get_shape().as_list()[-1]
-            pl_values, pl_indices = tf.nn.top_k(gl, tf.cast(self.pruning_rate*length, tf.int32))
+            # gl = tf.matmul(ss, Ws) + bs
+            # length = gl.get_shape().as_list()[-1]
+            # pl_values, pl_indices = tf.nn.top_k(gl, tf.cast(self.pruning_rate*length, tf.int32))
 
-            shape = gl.get_shape()
-            one_hot = tf.one_hot(pl_indices, shape[1], dtype=tf.float32)
-            gate = tf.reduce_sum(one_hot, axis=1)
+            # shape = gl.get_shape()
+            # one_hot = tf.one_hot(pl_indices, shape[1], dtype=tf.float32)
+            # gate = tf.reduce_sum(one_hot, axis=1)
             
-            pl = tf.multiply(gl, gate)
-            pl = tf.expand_dims(pl, 1)
-            pl = tf.expand_dims(pl, 1)
-            ''' End '''
+            # pl = tf.multiply(gl, gate)
+            # pl = tf.expand_dims(pl, 1)
+            # pl = tf.expand_dims(pl, 1)
+            # ''' End '''
 
             current = self.conv2d(current, in_features, out_features, kernel_size, stride)
             current = tf.contrib.layers.batch_norm(current, scale=True, is_training=is_training, updates_collections=None, trainable=True)
             # convValues.append(current)
 
-            current = pl*current
+            # current = pl*current
 
             current = tf.nn.relu(current)
             #current = tf.nn.dropout(current, keep_prob)

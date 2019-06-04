@@ -1,9 +1,13 @@
 from CIFAR_DataLoader import CifarDataManager
 from CifarNet import CifarNet
 
+import matplotlib.pyplot as plt
 import os
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1"       # 使用第二块GPU（从0开始）
+
+losses = []
+accracy = []
 
 d = CifarDataManager()
 model = CifarNet()
