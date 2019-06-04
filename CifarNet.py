@@ -7,7 +7,7 @@ import tensorflow as tf
 
 class CifarNet:
     def __init__(self):
-        self.lr = 0.001
+        self.lr = 0.01
         self.label_count = 100
 
         self.sess = tf.Session()
@@ -39,6 +39,7 @@ class CifarNet:
 
         acc = self.sess.run(self.accuracy, feed_dict = feed_dict)
         print("Testing accuracy: %f" %acc)
+        return acc
 
 
     def build_model(self):

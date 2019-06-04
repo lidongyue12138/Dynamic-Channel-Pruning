@@ -21,9 +21,11 @@ test_X, test_y = d.test.get_whole_data()
 for i in range(500):
     batch_X, batch_y = d.train.next_batch(64)
     loss = model.train_model(batch_X, batch_y)
+    losses.append(loss)
 
     if i%50==0:
         print("Loss at iter %d: %f" %(i, loss))
-        model.test_acc(test_X, test_y)
+        acc = model.test_acc(test_X, test_y)
+        accracy.append(acc)
         # print("testing accuracy: %f" %model.test_acc(test_data, test_label))
 
